@@ -17,6 +17,8 @@ const processGroupUrls = require('./src/processGroupUrls');
 
 // Set up stream to write output
 const outputStream = fs.createWriteStream(config.outputPath);
+outputStream.on('finish', () =>
+	console.log(green(`Finished writing to ${config.outputPath}`)));
 
 // Initialize!
 console.log(cyan(`Fetching groups data from ${config.APIUrl}`));
