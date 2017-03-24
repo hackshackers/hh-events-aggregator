@@ -1,20 +1,29 @@
-const ICAL = require('ical.js');
 const chalk = require('chalk');
 const red = chalk.red;
+const cyan = chalk.cyan;
+const yellow = chalk.yellow;
 
 /**
- * Use ical.js to parse ICS data into array of jCal events
+ * Use pick out VEVENTs from VCALENDAR string
  */
 module.exports = function(response, url) {
 	try {
-		// Parse ICAL data
-		var jCalData = ICAL.parse(response.data);
-		var comp = new ICAL.Component(jCalData[1]);
+		// trim everything before the first BEGIN:VEVENT
+		const firstVeventStart = response.data.indexOf('BEGIN:VEVENT');
+		if (-1 === firstVeventStart) {
+			console.log(yellow(`No VEVENT components in ${url}`));
+			return '';
+		}
+		const lastVeventEnd = response.data.lastIndexOf('END:VEVENT');
 
-		// Fetch the VEVENT parts
-		return comp.getAllSubcomponents('vevent');
+		console.log(cyan(`Found VEVENT components in ${url}`));
+
+		return response.data
+			.slice(firstVeventStart, lastVeventEnd)
+			.concat("END:VEVENT\n");
+
 	} catch (err) {
-		console.log(red(`Failed to parse ICS data from ${url}`));
+		console.log(red(`Failed to parse data from ${url}`));
 		return null;
 	}
 };

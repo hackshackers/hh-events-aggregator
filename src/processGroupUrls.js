@@ -8,7 +8,7 @@ const processICalResponse = require('./processICalResponse');
 const config = require('./config');
 const fs = require('fs');
 
-module.exports = function(groupUrls, calendar) {
+module.exports = function(groupUrls, outputStream) {
 	let requestsToMake = groupUrls.length;
 
 	// post-response handler
@@ -17,27 +17,23 @@ module.exports = function(groupUrls, calendar) {
 		console.log(yellow(`${requestsToMake} requests remaining...`));
 		if (0 >= requestsToMake) {
 			console.log(cyan('Completed requests, writing output file'));
-			fs.writeFile(config.outputPath, calendar.toString(), (err) => {
+			outputStream.write('END:VCALENDAR', 'utf8', (err) => {
 				if (err) throw err;
-				console.log(green(`Wrote calendar to ${config.outputPath}`));
-			});
+				outputStream.end();
+			})
 		}
 	};
 
 	// Process the URLs
 	groupUrls.forEach((url) => {
 		axios.get(url)
-			.catch((err) => {
-				console.log(red(`${err.response.status} error for ${url}`));
-				_afterResponse();
-			})
 			.then((response) => {
 				console.log(yellow(`Processing ${url}`));
-				const groupVevents = processICalResponse(response, url);
-				if (groupVevents) {
-					console.log(yellow(`Adding ${groupVevents.length} vevents`));
-					groupVevents.forEach((vevent) => calendar.addSubcomponent(vevent));
-				}
+				const toStream = processICalResponse(response, url);
+				outputStream.write(toStream || '', 'utf8', _afterResponse);
+			})
+			.catch((err) => {
+				console.log(red(`${err.response.status} error for ${url}`));
 				_afterResponse();
 			});
 	});
