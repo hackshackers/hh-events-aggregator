@@ -1,0 +1,15 @@
+{
+  "name": "hh-events-aggregator",
+  "version": "0.0.1",
+  "description": "Aggregates iCal feeds from Hacks/Hackers local groups",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Zach Green, Josh Kadis",
+  "license": "MIT",
+  "dependencies" : {
+    "axios": "0.15.3",
+    "chalk": "1.1.3"
+  }
+}

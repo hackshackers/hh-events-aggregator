@@ -1,0 +1,3 @@
+[submodule "hackshackers-hugo-content"]
+	path = hackshackers-hugo-content
+	url = git@github.com:hackshackers/hackshackers-hugo-content.git
