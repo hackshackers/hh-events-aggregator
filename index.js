@@ -3,6 +3,7 @@
  * Intended to run as a scheduled event on AWS Lambda
  */
 const axios = require('axios');
+const AWS = require('aws-sdk');
 const fs = require('fs');
 const path = require('path');
 const chalk = require('chalk');
@@ -18,8 +19,21 @@ const setupICal = require('./src/setupICal');
 
 // Set up stream to write output
 const outputStream = fs.createWriteStream(config.outputPath);
-outputStream.on('finish', () =>
-	console.log(green(`Finished writing to ${config.outputPath}`)));
+outputStream.on('finish', () => {
+	console.log(green(`Finished writing to ${config.outputPath}`));
+
+	const s3 = new AWS.S3();
+	s3.putObject({
+	    Bucket: config.aws.bucket,
+	    Key: config.aws.key,
+	    Body: fs.readFileSync(config.outputPath, 'utf8'),
+	    ACL: 'public-read',
+	    ContentType: 'text/calendar',
+	}, (err, data) => {
+	  if (err) console.log(err, err.stack);
+	  console.log(green(`Uploaded to ${config.aws.bucket}/${config.aws.key}`));
+	});
+});
 
 outputStream.write(`BEGIN:VCALENDAR
 VERSION:2.0

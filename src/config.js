@@ -10,5 +10,9 @@ module.exports = {
 		calscale: 'GREGORIAN',
 		method: 'PUBLISH',
 		tzid: 'UTC',
-	}
+	},
+	aws: {
+		bucket: 'hh-sandbox',
+		key: 'lib/hackshackers.ical',
+	},
 };
