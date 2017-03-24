@@ -11,46 +11,25 @@ const red = chalk.red;
 const green = chalk.green;
 const yellow = chalk.yellow;
 
-const readGroupFiles = require('./src/readGroupFiles');
+const config = require('./src/config');
 const parseGroupUrls = require('./src/parseGroupUrls');
-const processOutput = require('./src/processOutput');
-const processResponse = require('./src/processResponse');
+const processGroupUrls = require('./src/processGroupUrls');
 
 // Set up stream to write output
-const outputStream = fs.createWriteStream('output.ical');
+const outputStream = fs.createWriteStream(config.outputPath);
 
-// Locate all the group data files
-const groupFilesDir = path.join(__dirname, 'hackshackers-hugo-content/data/groups');
-console.log(cyan(`Scanning ${groupFilesDir}`));
-const groupFiles = readGroupFiles(groupFilesDir);
-console.log(cyan(`Found ${groupFiles.length} files`));
-
-// Parse valid iCal URLs from the available files
-const groupUrls = parseGroupUrls(groupFiles);
-const requestsToMake = groupUrls.length;
-
-// post-response handler
-function _afterResponse() {
-	requestsToMake--;
-	console.log(yellow(`${requestsToMake} requests remaining...`));
-	if (0 >= requestsToMake) {
-		console.log(cyan('Completed requests, processing output file'));
-		processOutput(outputStream);
-	}
-};
-
-// Process the URLs
-console.log(cyan(`Processing ${requestsToMake} iCal feed URLs...`));
-groupUrls.forEach((url) => {
-	axios.get(url)
-		.then((response) => {
-			console.log(yellow(`Processing ${url}`));
-			processResponse(response);
-			_afterResponse();
-		})
-		.catch((error) => {
-			console.log(red(`Error with ${url}`));
-			console.log(error);
-			_afterResponse();
-		});
-});
+// Initialize!
+console.log(cyan(`Fetching groups data from ${config.APIUrl}`));
+axios.get(config.APIUrl)
+	.then((response) => {
+		console.log(cyan('Fetched groups data, parsing URLs'));
+		return parseGroupUrls(response.data);
+	})
+	.then((groupUrls) => {
+		console.log(cyan(`Found ${groupUrls.length} calendar URLs, parsing now...`));
+		processGroupUrls(groupUrls, outputStream);
+	})
+	.catch((err) => {
+		console.log(red('Error fetching groups data'));
+		console.log(err);
+	});
