@@ -15,10 +15,11 @@ const yellow = chalk.yellow;
 const config = require('./src/config');
 const parseGroupUrls = require('./src/parseGroupUrls');
 const processGroupUrls = require('./src/processGroupUrls');
-const setupICal = require('./src/setupICal');
 
 // Set up stream to write output
 const outputStream = fs.createWriteStream(config.outputPath);
+
+// Upload to S3 when complete
 outputStream.on('finish', () => {
   console.log(green(`Finished writing to ${config.outputPath}`));
 
@@ -42,7 +43,7 @@ CALSCALE:GREGORIAN
 METHOD:PUBLISH
 TZID:UTC
 `, 'utf8', () => {
-  // Initialize!
+  // Start fetching
   console.log(cyan(`Fetching groups data from ${config.APIUrl}`));
   axios.get(config.APIUrl)
     .then((response) => {
@@ -50,7 +51,7 @@ TZID:UTC
       return parseGroupUrls(response.data);
     })
     .catch((err) => {
-      console.log(red('Error fetching groups data'));
+      console.log(red('Error fetching or parsing groups data'));
       console.log(err);
     })
     .then((groupUrls) => {

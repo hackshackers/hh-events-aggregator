@@ -1,3 +1,4 @@
 node_modules/
 npm-debug.log
 hackshackers.ical
+.DS_Store

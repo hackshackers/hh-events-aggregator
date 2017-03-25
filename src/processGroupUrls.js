@@ -8,6 +8,12 @@ const processICalResponse = require('./processICalResponse');
 const config = require('./config');
 const fs = require('fs');
 
+/**
+ * Fetch list of iCal feeds and save events to stream
+ *
+ * @param array          groupUrls    List of groups' iCal feed urls
+ * @param WritableStream outputStream Where we write the output
+ */
 module.exports = function(groupUrls, outputStream) {
   let requestsToMake = groupUrls.length;
 
