@@ -4,26 +4,31 @@ const cyan = chalk.cyan;
 const yellow = chalk.yellow;
 
 /**
- * Use pick out VEVENTs from VCALENDAR string
+ * Take return VEVENT portion of VCALENDAR
+ *
+ * @param string vcalendar Raw VCALENDAR data
+ * @param string url       URL fetched
+ * @return string VEVENTs portion of input
  */
-module.exports = function(response, url) {
-	try {
-		// trim everything before the first BEGIN:VEVENT
-		const firstVeventStart = response.data.indexOf('BEGIN:VEVENT');
+module.exports = function(vcalendar, url) {
+	return new Promise((resolve, reject) =>{
+		if (!vcalendar || 'string' !== typeof vcalendar) {
+			reject();
+			return;
+		}
+
+		const firstVeventStart = vcalendar.indexOf('BEGIN:VEVENT');
 		if (-1 === firstVeventStart) {
 			console.log(yellow(`No VEVENT components in ${url}`));
-			return '';
+			resolve('');
+			return;
 		}
-		const lastVeventEnd = response.data.lastIndexOf('END:VEVENT');
+		const lastVeventEnd = vcalendar.lastIndexOf('END:VEVENT');
 
 		console.log(cyan(`Found VEVENT components in ${url}`));
 
-		return response.data
+		resolve(vcalendar
 			.slice(firstVeventStart, lastVeventEnd)
-			.concat("END:VEVENT\n");
-
-	} catch (err) {
-		console.log(red(`Failed to parse data from ${url}`));
-		return null;
-	}
+			.concat("END:VEVENT\n"));
+	});
 };

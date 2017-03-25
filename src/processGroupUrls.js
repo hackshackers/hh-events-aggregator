@@ -29,8 +29,10 @@ module.exports = function(groupUrls, outputStream) {
 		axios.get(url)
 			.then((response) => {
 				console.log(yellow(`Processing ${url}`));
-				const toStream = processICalResponse(response, url);
-				outputStream.write(toStream || '', 'utf8', _afterResponse);
+				processICalResponse(response.data, url)
+					.then((vevents) =>
+						outputStream.write(vevents || '', 'utf8', _afterResponse))
+					.catch(() => console.log(red(`Failed to parse data from ${url}`)));
 			})
 			.catch((err) => {
 				console.log(red(`${err.response.status} error for ${url}`));
