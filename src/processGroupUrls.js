@@ -9,34 +9,34 @@ const config = require('./config');
 const fs = require('fs');
 
 module.exports = function(groupUrls, outputStream) {
-	let requestsToMake = groupUrls.length;
+  let requestsToMake = groupUrls.length;
 
-	// post-response handler
-	function _afterResponse() {
-		requestsToMake--;
-		console.log(yellow(`${requestsToMake} requests remaining...`));
-		if (0 >= requestsToMake) {
-			console.log(cyan('Completed requests, writing output file'));
-			outputStream.write('END:VCALENDAR', 'utf8', (err) => {
-				if (err) throw err;
-				outputStream.end();
-			})
-		}
-	};
+  // post-response handler
+  function _afterResponse() {
+    requestsToMake--;
+    console.log(yellow(`${requestsToMake} requests remaining...`));
+    if (0 >= requestsToMake) {
+      console.log(cyan('Completed requests, writing output file'));
+      outputStream.write('END:VCALENDAR', 'utf8', (err) => {
+        if (err) throw err;
+        outputStream.end();
+      })
+    }
+  };
 
-	// Process the URLs
-	groupUrls.forEach((url) => {
-		axios.get(url)
-			.then((response) => {
-				console.log(yellow(`Processing ${url}`));
-				processICalResponse(response.data, url)
-					.then((vevents) =>
-						outputStream.write(vevents || '', 'utf8', _afterResponse))
-					.catch(() => console.log(red(`Failed to parse data from ${url}`)));
-			})
-			.catch((err) => {
-				console.log(red(`${err.response.status} error for ${url}`));
-				_afterResponse();
-			});
-	});
+  // Process the URLs
+  groupUrls.forEach((url) => {
+    axios.get(url)
+      .then((response) => {
+        console.log(yellow(`Processing ${url}`));
+        processICalResponse(response.data, url)
+          .then((vevents) =>
+            outputStream.write(vevents || '', 'utf8', _afterResponse))
+          .catch(() => console.log(red(`Failed to parse data from ${url}`)));
+      })
+      .catch((err) => {
+        console.log(red(`${err.response.status} error for ${url}`));
+        _afterResponse();
+      });
+  });
 }

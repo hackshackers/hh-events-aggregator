@@ -20,19 +20,19 @@ const setupICal = require('./src/setupICal');
 // Set up stream to write output
 const outputStream = fs.createWriteStream(config.outputPath);
 outputStream.on('finish', () => {
-	console.log(green(`Finished writing to ${config.outputPath}`));
+  console.log(green(`Finished writing to ${config.outputPath}`));
 
-	const s3 = new AWS.S3();
-	s3.putObject({
-	    Bucket: config.aws.bucket,
-	    Key: config.aws.key,
-	    Body: fs.readFileSync(config.outputPath, 'utf8'),
-	    ACL: 'public-read',
-	    ContentType: 'text/calendar',
-	}, (err, data) => {
-	  if (err) console.log(err, err.stack);
-	  console.log(green(`Uploaded to ${config.aws.bucket}/${config.aws.key}`));
-	});
+  const s3 = new AWS.S3();
+  s3.putObject({
+      Bucket: config.aws.bucket,
+      Key: config.aws.key,
+      Body: fs.readFileSync(config.outputPath, 'utf8'),
+      ACL: 'public-read',
+      ContentType: 'text/calendar',
+  }, (err, data) => {
+    if (err) console.log(err, err.stack);
+    console.log(green(`Uploaded to ${config.aws.bucket}/${config.aws.key}`));
+  });
 });
 
 outputStream.write(`BEGIN:VCALENDAR
@@ -42,19 +42,19 @@ CALSCALE:GREGORIAN
 METHOD:PUBLISH
 TZID:UTC
 `, 'utf8', () => {
-	// Initialize!
-	console.log(cyan(`Fetching groups data from ${config.APIUrl}`));
-	axios.get(config.APIUrl)
-		.then((response) => {
-			console.log(cyan('Fetched groups data, parsing URLs'));
-			return parseGroupUrls(response.data);
-		})
-		.catch((err) => {
-			console.log(red('Error fetching groups data'));
-			console.log(err);
-		})
-		.then((groupUrls) => {
-			console.log(cyan(`Found ${groupUrls.length} calendar URLs, parsing now...`));
-			processGroupUrls(groupUrls, outputStream);
-		});
+  // Initialize!
+  console.log(cyan(`Fetching groups data from ${config.APIUrl}`));
+  axios.get(config.APIUrl)
+    .then((response) => {
+      console.log(cyan('Fetched groups data, parsing URLs'));
+      return parseGroupUrls(response.data);
+    })
+    .catch((err) => {
+      console.log(red('Error fetching groups data'));
+      console.log(err);
+    })
+    .then((groupUrls) => {
+      console.log(cyan(`Found ${groupUrls.length} calendar URLs, parsing now...`));
+      processGroupUrls(groupUrls, outputStream);
+    });
 });

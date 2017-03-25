@@ -11,24 +11,24 @@ const yellow = chalk.yellow;
  * @return string VEVENTs portion of input
  */
 module.exports = function(vcalendar, url) {
-	return new Promise((resolve, reject) =>{
-		if (!vcalendar || 'string' !== typeof vcalendar) {
-			reject();
-			return;
-		}
+  return new Promise((resolve, reject) =>{
+    if (!vcalendar || 'string' !== typeof vcalendar) {
+      reject();
+      return;
+    }
 
-		const firstVeventStart = vcalendar.indexOf('BEGIN:VEVENT');
-		if (-1 === firstVeventStart) {
-			console.log(yellow(`No VEVENT components in ${url}`));
-			resolve('');
-			return;
-		}
-		const lastVeventEnd = vcalendar.lastIndexOf('END:VEVENT');
+    const firstVeventStart = vcalendar.indexOf('BEGIN:VEVENT');
+    if (-1 === firstVeventStart) {
+      console.log(yellow(`No VEVENT components in ${url}`));
+      resolve('');
+      return;
+    }
+    const lastVeventEnd = vcalendar.lastIndexOf('END:VEVENT');
 
-		console.log(cyan(`Found VEVENT components in ${url}`));
+    console.log(cyan(`Found VEVENT components in ${url}`));
 
-		resolve(vcalendar
-			.slice(firstVeventStart, lastVeventEnd)
-			.concat("END:VEVENT\n"));
-	});
+    resolve(vcalendar
+      .slice(firstVeventStart, lastVeventEnd)
+      .concat("END:VEVENT\n"));
+  });
 };
