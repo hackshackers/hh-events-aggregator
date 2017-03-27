@@ -3,7 +3,6 @@
  * Intended to run as a scheduled event on AWS Lambda
  */
 const axios = require('axios');
-const AWS = require('aws-sdk');
 const fs = require('fs');
 const path = require('path');
 const chalk = require('chalk');
@@ -15,6 +14,7 @@ const yellow = chalk.yellow;
 const config = require('./src/config');
 const parseGroupUrls = require('./src/parseGroupUrls');
 const processGroupUrls = require('./src/processGroupUrls');
+const S3Deploy = require('./src/S3Deploy');
 
 // Set up stream to write output
 const outputStream = fs.createWriteStream(config.outputPath);
@@ -22,18 +22,7 @@ const outputStream = fs.createWriteStream(config.outputPath);
 // Upload to S3 when complete
 outputStream.on('finish', () => {
   console.log(green(`Finished writing to ${config.outputPath}`));
-
-  const s3 = new AWS.S3();
-  s3.putObject({
-      Bucket: config.aws.bucket,
-      Key: config.aws.key,
-      Body: fs.readFileSync(config.outputPath, 'utf8'),
-      ACL: 'public-read',
-      ContentType: 'text/calendar',
-  }, (err, data) => {
-    if (err) console.log(err, err.stack);
-    console.log(green(`Uploaded to ${config.aws.bucket}/${config.aws.key}`));
-  });
+  S3Deploy();
 });
 
 outputStream.write(`BEGIN:VCALENDAR

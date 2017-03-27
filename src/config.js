@@ -12,7 +12,7 @@ module.exports = {
     tzid: 'UTC',
   },
   aws: {
-    bucket: 'hh-sandbox',
+    buckets: ['hh-sandbox', 'hh-staging', 'hh-production'],
     key: 'lib/hackshackers.ical',
   },
 };
