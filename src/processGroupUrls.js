@@ -23,7 +23,7 @@ module.exports = function(groupUrls, outputStream) {
     console.log(yellow(`${requestsToMake} requests remaining...`));
     if (0 >= requestsToMake) {
       console.log(cyan('Completed requests, writing output file'));
-      outputStream.write('END:VCALENDAR', 'utf8', (err) => {
+      outputStream.write(config.vcalendar.append, 'utf8', (err) => {
         if (err) throw err;
         outputStream.end();
       })

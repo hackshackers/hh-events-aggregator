@@ -28,13 +28,7 @@ exports.init = () => {
     S3Deploy();
   });
 
-  outputStream.write(`BEGIN:VCALENDAR
-  VERSION:2.0
-  PRODID:Hacks/Hackers aggregated global events calendar
-  CALSCALE:GREGORIAN
-  METHOD:PUBLISH
-  TZID:UTC
-  `, 'utf8', () => {
+  outputStream.write(config.vcalendar.prepend, 'utf8', () => {
     // Start fetching
     console.log(cyan(`Fetching groups data from ${config.APIUrl}`));
     axios.get(config.APIUrl)
