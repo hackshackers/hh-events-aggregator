@@ -1,16 +1,13 @@
 const AWS = require('aws-sdk');
 const green = require('chalk').green;
-const fs = require('fs');
-const path = require('path');
-
 const config = require('./config');
 
-module.exports = function() {
+module.exports = function(outputBuffer) {
   function deployToBucket(Bucket, s3) {
     s3.putObject({
         Bucket,
         Key: config.aws.key,
-        Body: fs.readFileSync(config.outputPath, 'utf8'),
+        Body: outputBuffer,
         ACL: 'public-read',
         ContentType: 'text/calendar',
     }, (err, data) => {

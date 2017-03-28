@@ -6,27 +6,25 @@ const green = chalk.green;
 const yellow = chalk.yellow;
 const processICalResponse = require('./processICalResponse');
 const config = require('./config');
-const fs = require('fs');
+const S3Deploy = require('./S3Deploy');
 
 /**
  * Fetch list of iCal feeds and save events to stream
  *
- * @param array          groupUrls    List of groups' iCal feed urls
- * @param WritableStream outputStream Where we write the output
+ * @param array  groupUrls    List of groups' iCal feed urls
  */
-module.exports = function(groupUrls, outputStream) {
+module.exports = function(groupUrls) {
   let requestsToMake = groupUrls.length;
+  let outputBuffer = Buffer.from(config.vcalendar.prepend);
 
   // post-response handler
   function _afterResponse() {
     requestsToMake--;
     console.log(yellow(`${requestsToMake} requests remaining...`));
     if (0 >= requestsToMake) {
-      console.log(cyan('Completed requests, writing output file'));
-      outputStream.write('END:VCALENDAR', 'utf8', (err) => {
-        if (err) throw err;
-        outputStream.end();
-      })
+      console.log(cyan('Completed requests, writing output'));
+      outputBuffer = Buffer.concat([outputBuffer, Buffer.from(config.vcalendar.append)]);
+      S3Deploy(outputBuffer);
     }
   };
 
@@ -36,8 +34,10 @@ module.exports = function(groupUrls, outputStream) {
       .then((response) => {
         console.log(yellow(`Processing ${url}`));
         processICalResponse(response.data, url)
-          .then((vevents) =>
-            outputStream.write(vevents || '', 'utf8', _afterResponse))
+          .then((vevents) => {
+            outputBuffer = Buffer.concat([outputBuffer, Buffer.from(vevents)]);
+            _afterResponse();
+          })
           .catch(() => console.log(red(`Failed to parse data from ${url}`)));
       })
       .catch((err) => {

@@ -15,4 +15,8 @@ module.exports = {
     buckets: ['hh-sandbox', 'hh-staging', 'hh-production'],
     key: 'lib/hackshackers.ical',
   },
+  vcalendar: {
+    prepend: "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:Hacks/Hackers aggregated global events calendar\nCALSCALE:GREGORIAN\nMETHOD:PUBLISH\nTZID:UTC\n",
+    append: 'END:VCALENDAR',
+  }
 };
