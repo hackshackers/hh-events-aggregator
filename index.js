@@ -4,8 +4,6 @@
  * $ node -e "require('./index').init()"
  */
 const axios = require('axios');
-const fs = require('fs');
-const path = require('path');
 const chalk = require('chalk');
 const cyan = chalk.cyan;
 const red = chalk.red;

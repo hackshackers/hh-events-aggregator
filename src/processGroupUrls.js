@@ -6,8 +6,8 @@ const green = chalk.green;
 const yellow = chalk.yellow;
 const processICalResponse = require('./processICalResponse');
 const config = require('./config');
-const fs = require('fs');
 const S3Deploy = require('./S3Deploy');
+
 /**
  * Fetch list of iCal feeds and save events to stream
  *

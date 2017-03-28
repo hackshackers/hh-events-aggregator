@@ -1,7 +1,5 @@
 const AWS = require('aws-sdk');
 const green = require('chalk').green;
-const fs = require('fs');
-const path = require('path');
 const config = require('./config');
 
 module.exports = function(outputBuffer) {
