@@ -4,6 +4,10 @@ const config = require('./config');
 
 module.exports = function(outputBuffer) {
   function deployToBucket(Bucket, s3) {
+    if (!process.env.DEPLOY_S3) {
+      console.log(green(`Skipped deploy to ${Bucket}/${config.aws.key}`));
+      return;
+    }
     s3.putObject({
         Bucket,
         Key: config.aws.key,
@@ -14,7 +18,7 @@ module.exports = function(outputBuffer) {
       if (err) {
         console.log(err, err.stack)
       } else {
-        console.log(green(`Uploaded to ${Bucket}/${config.aws.key}`));
+        console.log(green(`Deployed to ${Bucket}/${config.aws.key}`));
       }
     });
   }
