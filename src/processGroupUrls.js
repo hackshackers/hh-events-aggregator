@@ -23,7 +23,7 @@ module.exports = function(groupUrls) {
     console.log(yellow(`${requestsToMake} requests remaining...`));
     if (0 >= requestsToMake) {
       console.log(cyan('Completed requests, writing output'));
-      outputBuffer = Buffer.concat(outputBuffer, Buffer.from(config.vcalendar.apppend));
+      outputBuffer = Buffer.concat([outputBuffer, Buffer.from(config.vcalendar.append)]);
       S3Deploy(outputBuffer);
     }
   };
@@ -35,7 +35,7 @@ module.exports = function(groupUrls) {
         console.log(yellow(`Processing ${url}`));
         processICalResponse(response.data, url)
           .then((vevents) => {
-            outputBuffer = Buffer.concat(outputBuffer, Buffer.from(vevents));
+            outputBuffer = Buffer.concat([outputBuffer, Buffer.from(vevents)]);
             _afterResponse();
           })
           .catch(() => console.log(red(`Failed to parse data from ${url}`)));
