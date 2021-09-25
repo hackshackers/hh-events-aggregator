@@ -18,7 +18,12 @@ const eventbriteDownload = require('./src/eventbrite.js');
 
 exports.init = () => {
     // Fetch Eventbrite information.
-     eventbriteDownload()
+       eventbriteDownload()
+       //.then((eventstring) => {
+     //console.log("In main, response is: ", eventstring)
+//})
+
+
 
 //       axios.get(`${config.APIUrl}eventbrite.json`)
 //          .then((response) => {
