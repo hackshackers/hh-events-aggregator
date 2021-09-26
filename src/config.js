@@ -4,7 +4,7 @@
 module.exports = {
   APIUrl: 'http://hh-sandbox.s3-website-us-west-2.amazonaws.com/groups-json/',
   outputPath: 'hackshackers.ical',
-  eventbriteToken: 'B2G4XZJKAF35RM6ZXKSR',
+  eventbriteToken: '--eventbrite-private-key--',
   eventBriteUrl: 'https://www.eventbriteapi.com/',
   eventBriteApiVersion: 'v3',
   calProperties: {
