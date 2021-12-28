@@ -14,14 +14,25 @@ const yellow = chalk.yellow;
 const config = require('./src/config');
 // const parseGroupUrls = require('./src/parseGroupUrls');
 const processGroupUrls = require('./src/processGroupUrls');
-const eventbriteDownload = require('./src/eventbrite.js');
+const eventbriteDownload =  require('./src/eventbrite.js');
 
-exports.init = () => {
+
+async function printers(input){
+await console.log("printers ", input)
+}
+
+exports.init = async () => {
     // Fetch Eventbrite information.
-       eventbriteDownload()
-       //.then((eventstring) => {
-     //console.log("In main, response is: ", eventstring)
-//})
+     //  const results =  eventbriteDownload();
+         const results =  await eventbriteDownload();
+          console.log("final results: ", results)
+          printers(results)
+
+//.then(response => console.log("--!!!!!---", response))
+     //  console.log("results main: ", results)
+       //.then(eventstring => console.log("In the main, response is: ", eventstring)
+//   .then(x => console.log(x));
+}
 
 
 
@@ -30,7 +41,6 @@ exports.init = () => {
 //                 //console.log(response.data["eventbrite_events"])
 //                eventbriteDownload(response.data["eventbrite_events"])
 //                   })
-  }
 
 
 
