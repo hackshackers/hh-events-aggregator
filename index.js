@@ -16,24 +16,17 @@ const config = require('./src/config');
 const processGroupUrls = require('./src/processGroupUrls');
 const eventbriteDownload =  require('./src/eventbrite.js');
 
-
-async function printers(input){
-await console.log("printers ", input)
-}
-
 exports.init = async () => {
     // Fetch Eventbrite information.
-     //  const results =  eventbriteDownload();
-         const results =  await eventbriteDownload();
-          console.log("final results: ", results)
-          printers(results)
-
-//.then(response => console.log("--!!!!!---", response))
-     //  console.log("results main: ", results)
-       //.then(eventstring => console.log("In the main, response is: ", eventstring)
+    const results =  await eventbriteDownload();
+   // console.log("final results: ", results)
+    processGroupUrls(results);
+  
+    //.then(response => console.log("--!!!!!---", response))
+    //  console.log("results main: ", results)
+    //.then(eventstring => console.log("In the main, response is: ", eventstring)
 //   .then(x => console.log(x));
 }
-
 
 
 //       axios.get(`${config.APIUrl}eventbrite.json`)
@@ -41,8 +34,6 @@ exports.init = async () => {
 //                 //console.log(response.data["eventbrite_events"])
 //                eventbriteDownload(response.data["eventbrite_events"])
 //                   })
-
-
 
 //  // Start fetching the event informacion. 
 //  console.log(cyan(`Fetching groups data from ${config.APIUrl}`));

@@ -13,36 +13,21 @@ const S3Deploy = require('./S3Deploy');
  *
  * @param array  groupUrls    List of groups' iCal feed urls
  */
-module.exports = function(groupUrls) {
-  let requestsToMake = groupUrls.length;
+module.exports = function(eventString) {
+  //let requestsToMake = groupUrls.length;
   let outputBuffer = Buffer.from(config.vcalendar.prepend);
 
   // post-response handler
   function _afterResponse() {
-    requestsToMake--;
-    console.log(yellow(`${requestsToMake} requests remaining...`));
-    if (0 >= requestsToMake) {
-      console.log(cyan('Completed requests, writing output'));
-      outputBuffer = Buffer.concat([outputBuffer, Buffer.from(config.vcalendar.append)]);
+     outputBuffer = Buffer.concat([outputBuffer, Buffer.from(config.vcalendar.append)]);
       S3Deploy(outputBuffer);
-    }
   };
+   console.log("event string: ", eventString)
+   eventBuffer = Buffer.from(eventString, 'utf8')
+console.log("event buffer", eventBuffer)
+  // Add the imported events into the ical 
+   outputBuffer = Buffer.concat([outputBuffer, eventBuffer]);
+   _afterResponse();
 
-  // Process the URLs
-  groupUrls.forEach((url) => {
-    axios.get(url)
-      .then((response) => {
-        console.log(yellow(`Processing ${url}`));
-        processICalResponse(response.data, url)
-          .then((vevents) => {
-            outputBuffer = Buffer.concat([outputBuffer, Buffer.from(vevents)]);
-            _afterResponse();
-          })
-          .catch(() => console.log(red(`Failed to parse data from ${url}`)));
-      })
-      .catch((err) => {
-        console.log(red(`${err.response.status} error for ${url}`));
-        _afterResponse();
-      });
-  });
+
 }
