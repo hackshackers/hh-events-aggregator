@@ -5,10 +5,6 @@ const cyan = chalk.cyan;
 const red = chalk.red;
 
 
-function test_print(here_input){
-console.log("hello, we are printing ", here_input)
-}
-
 /**
  * Downloads all of the information from the Eventbrite groups ndicated
  * in the evetbrite.json file of the AWS Bucket indicated in the config file.
@@ -16,16 +12,35 @@ console.log("hello, we are printing ", here_input)
  * Output: List of upcoming eventbrite events in indicated format.
  */
 
-  function _stripSymbolsFromString(input_string) {
+function _stripSymbolsFromString(input_string) {
          return input_string.replace(/[^a-zA-Z0-9 ]/g, "")
        };
 
-  function  _createValidVeventString(event) {
+function  _createValidVeventString(event) {
      // Convert each event from EventBrite into an Ical Event string
      // This string will be later appended to the master calendar we create.
 
     return `BEGIN:VEVENT\nDTSTART:${_stripSymbolsFromString(event['start']['utc'])}\nDTEND:${_stripSymbolsFromString(event['end']['utc'])}\nDTSTAMP:${_stripSymbolsFromString(event['created'])}\nLAST-MODIFIED:${_stripSymbolsFromString(event['changed'])}\nSUMMARY:${event['description']['text']}\nEND:VEVENT`
       };
+
+function _separate_events_from_master_array(master_event_array) {
+// Given a master event array (ie. the array of responses from EventBrite's 
+// website, this function will strip out unnecessary information and
+// save the events into a singular array. 
+// This is a necessary filtering process to be able to present the
+// events on the homepage. 
+
+var event_output_array = [];
+var event_output_array_collapsed = [];
+
+master_event_array.forEach(x => event_output_array.push(x["data"]["events"]))
+
+//Collapse the array of arrays, so as to not have a series of arrays
+event_output_array.forEach(x => event_output_array_collapsed.push(...x))
+
+return event_output_array_collapsed
+
+}
 
 module.exports = function() {
   let downloadedEventBlobs= [];
@@ -41,76 +56,42 @@ module.exports = function() {
    * Download all of the event information for each eventbrite
    * organization_id included in the json list.
    */
+
 async function _downloadEventBriteInfo(orgIdarray) {
+var promises = [];
 
-function testa() {
-return axios.get(`${config.eventBriteUrl}${config.eventBriteApiVersion}/organizations/572302778549/events/` , {
+function download_event_data(event_id) {
+return axios.get(`${config.eventBriteUrl}${config.eventBriteApiVersion}/organizations/${event_id}/events/` , {
        headers: {
          'Authorization': `Bearer ${config.eventbriteToken}`
         }
-}    )};
+}    )
+}
 
-function testb() {
-return axios.get(`${config.eventBriteUrl}${config.eventBriteApiVersion}/organizations/125768645695/events/` , {
-       headers: {
-         'Authorization': `Bearer ${config.eventbriteToken}`
-        }
-} )};
+// Generate an array of functions, in accordance with the IDs returned
+//  in the array
+orgIdarray.forEach(x => promises.push({func: download_event_data, arg: x}));
 
-const promised_land = Promise.all([testa(), testb()]).then(function (results) {
-const acct =  results[0];
-const perm =  results[1];
-//console.log("perm", perm)
+// For each organization ID, request the list of events from EventBrite
+const events_array = Promise.all(promises.map((prom) => prom.func(prom.arg))).then(function (results) {
 
-return results
+// With the response blobs from EventBrite, strip out the individual event
+// information
+var event_array = _separate_events_from_master_array(results)
+return event_array
 
-}).then((returnedData => {
-//test_print(returnedData)
-//return returnedData
-return "jigsaw"
+}).then((events_array => {
+// For each event, create a valid event string
+event_string_array = [];
+
+events_array.forEach(x => event_string_array.push(_createValidVeventString(x)))
+return event_string_array
 }))
 
-//    for (const x of orgIdarray) {
-//      axios.get(`${config.eventBriteUrl}${config.eventBriteApiVersion}/organizations/${x}/events/`, { 
-//        headers: {
-//          'Authorization': `Bearer ${config.eventbriteToken}`
-//         }}
-//     ).then(response => test_print(response["status"])
-//)
-//}
-return promised_land
+return events_array
 }
 
 
-//
-//
-//
-//.then(function(response)  {
-//       downloadedEventBlobs.push(response)
-//       return response
-//}).then(function(result) {
-//
-//// response => return downloadedEventBlobs.push(response) )
-////     .then(function(result)  {
-//          for (var event_blob of downloadedEventBlobs) {
-//            for (var event of event_blob['data']['events']) {
-//                // DTSTAMP, DTSTART, DTEND, SUMMARY.
-//                 calendarStringOfEvents += _createValidVeventString(event)  
-//               }
-//            } 
-//       //  console.log("end: ", calendarStringOfEvents) 
-//	console.log("Terminó loop")
-//	return calendarStringOfEvents
-//      }).catch(err => {
-//       console.log(red(`Error encountered with group_id: ${x}, ${err}`))
-//      })
-//        }
-//
-//     })
-//   // }).then(calendarStringOfEvents => {
-//  // return calendarStringOfEvents
-////})
-//}
  /**
  *  Download the list of organization IDs from the json file stored in
  * the hacks-hackers S3 bucket.
@@ -118,44 +99,12 @@ return promised_land
    const response = axios.get(`${config.APIUrl}eventbrite.json`);
    console.log("this that" , response)
 
-//console.log(result.data["eventbrite_org_ids"])
-// add trying
-// _downloadEventBriteInfo(["572302778549", "125768645695"])
-
 const event_array = response.then(result => {
-         const results = _downloadEventBriteInfo(result.data["eventbrite_org_ids"])
-     return results
-}).then(result1 => {
-   console.log("next in line result", result1)
-   return result1
+      return  _downloadEventBriteInfo(result.data["eventbrite_org_ids"])
 })
 
-//console.log("EAR", event_array)
 
-//.then(result => {
-//console.log("result is: ", result)
-//})
+// console.log("Final niick results: ", final_results)
 
-
-
-   // console.log("response is: ", response.data["eventbrite_org_ids"])
-//     orgIdarray= response.data["eventbrite_org_ids"]
-  //  const events = new Promise(_downloadEventBriteInfo)
-
-//   results =  _downloadEventBriteInfo(response.data["eventbrite_org_ids"])
-
-
-
-
-
-
-     // return Promise.all([_downloadEventBriteInfo(response.data["eventbrite_org_ids"])]).then((results) => {
-    //console.log("results: ----- ", results)
-//})
- 
-  // return await  _downloadEventBriteInfo(response.data["eventbrite_org_ids"])
-   // const final_results = await _downloadEventBriteInfo(response.data["eventbrite_org_ids"]);
-   // console.log("Final niick results: ", final_results)
 return event_array
-// return "hi"
 }
