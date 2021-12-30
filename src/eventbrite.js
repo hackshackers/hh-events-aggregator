@@ -104,7 +104,5 @@ const event_array = response.then(result => {
 })
 
 
-// console.log("Final niick results: ", final_results)
-
 return event_array
 }
