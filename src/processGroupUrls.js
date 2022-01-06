@@ -22,8 +22,8 @@ module.exports = function(eventString) {
      S3Deploy(outputBuffer);
   };
   // Add events to the buffer
-   for (const x of eventString) {
-     outputBuffer = Buffer.concat([outputBuffer, Buffer.from(x)]);
+   for (const event of eventString) {
+     outputBuffer = Buffer.concat([outputBuffer, Buffer.from(event)]);
     }
    eventBuffer = Buffer.from(eventString, 'utf8')
     _afterResponse();
