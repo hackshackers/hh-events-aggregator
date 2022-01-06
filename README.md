@@ -2,6 +2,11 @@
 
 Runs on AWS Lambda to combine event feeds from Hacks/Hackers local groups into a single feed, then deploys to the `hh-sandbox`, `hh-staging`, and `hh-production` S3 buckets.
 
+After extensive investigation, we are only pulling from group events inside EventBrite.
+
+The MeetUp API at last check was paid. An earlier version of the application scraped data from the MeetUp site, but this strategy is not recommended as a long-term solution, as any change to the MeetUp website introduces breaking changes to our app. (Whereas a MeetUp API would be versioned). 
+The Facebook API does not provide an automatable way to continually download event information. (I.E. In order for the application to function, it would be required for a user to manually approve the access on a regular basis.
+
 ## Running locally
 
 First, set up the [AWS SDK](http://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/getting-started-nodejs.html#getting-started-nodejs-install-sdk) for Node.
