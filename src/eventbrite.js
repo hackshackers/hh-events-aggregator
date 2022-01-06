@@ -4,7 +4,6 @@ const config = require('./config');
 const cyan = chalk.cyan;
 const red = chalk.red;
 
-
 /**
  * Downloads all of the information from the Eventbrite groups ndicated
  * in the evetbrite.json file of the AWS Bucket indicated in the config file.
@@ -20,7 +19,7 @@ function  _createValidVeventString(event) {
      // Convert each event from EventBrite into an Ical Event string
      // This string will be later appended to the master calendar we create.
 
-    return `BEGIN:VEVENT\nDTSTART:${_stripSymbolsFromString(event['start']['utc'])}\nDTEND:${_stripSymbolsFromString(event['end']['utc'])}\nDTSTAMP:${_stripSymbolsFromString(event['created'])}\nLAST-MODIFIED:${_stripSymbolsFromString(event['changed'])}\nSUMMARY:${event['description']['text']}\nEND:VEVENT`
+    return `BEGIN:VEVENT\nSUMMARY:${event['name']['text']}\nDTSTART:${_stripSymbolsFromString(event['start']['utc'])}\nDTEND:${_stripSymbolsFromString(event['end']['utc'])}\nDTSTAMP:${_stripSymbolsFromString(event['created'])}\nUID:EVENTBRITE@${event['id']}\nURL:${event['url']}\nDESCRIPTION:${(event['url'])}\nLAST-MODIFIED:${_stripSymbolsFromString(event['changed'])}\nEND:VEVENT\n`
       };
 
 function _separate_events_from_master_array(master_event_array) {
@@ -78,6 +77,7 @@ const events_array = Promise.all(promises.map((prom) => prom.func(prom.arg))).th
 // With the response blobs from EventBrite, strip out the individual event
 // information
 var event_array = _separate_events_from_master_array(results)
+console.log(event_array)
 return event_array
 
 }).then((events_array => {
@@ -85,6 +85,7 @@ return event_array
 event_string_array = [];
 
 events_array.forEach(x => event_string_array.push(_createValidVeventString(x)))
+
 return event_string_array
 }))
 

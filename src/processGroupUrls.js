@@ -12,22 +12,19 @@ const S3Deploy = require('./S3Deploy');
  * Fetch list of iCal feeds and save events to stream
  *
  * @param array  groupUrls    List of groups' iCal feed urls
- */
-module.exports = function(eventString) {
-  //let requestsToMake = groupUrls.length;
-  let outputBuffer = Buffer.from(config.vcalendar.prepend);
+*/
 
-  // post-response handler
+module.exports = function(eventString) {
+     // let requestsToMake = groupUrls.length;
+     let outputBuffer = Buffer.from(config.vcalendar.prepend);
+     // post-response handler
   function _afterResponse() {
      outputBuffer = Buffer.concat([outputBuffer, Buffer.from(config.vcalendar.append)]);
-      S3Deploy(outputBuffer);
+     S3Deploy(outputBuffer);
   };
-   console.log("event string: ", eventString)
+  // Add events to the buffer
+   for (const x of eventString) {
+     outputBuffer = Buffer.concat([outputBuffer, Buffer.from(x)]);
+    }
    eventBuffer = Buffer.from(eventString, 'utf8')
-console.log("event buffer", eventBuffer)
-  // Add the imported events into the ical 
-   outputBuffer = Buffer.concat([outputBuffer, eventBuffer]);
-   _afterResponse();
-
-
-}
+    _afterResponse();
