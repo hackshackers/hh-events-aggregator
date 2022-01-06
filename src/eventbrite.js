@@ -60,7 +60,7 @@ async function _downloadEventBriteInfo(orgIdarray) {
 var promises = [];
 
 function download_event_data(event_id) {
-return axios.get(`${config.eventBriteUrl}${config.eventBriteApiVersion}/organizations/${event_id}/events/` , {
+return axios.get(`${config.eventBriteUrl}${config.eventBriteApiVersion}/organizations/${event_id}/events/?order_by=start_desc` , {
        headers: {
          'Authorization': `Bearer ${config.eventbriteToken}`
         }
@@ -77,7 +77,6 @@ const events_array = Promise.all(promises.map((prom) => prom.func(prom.arg))).th
 // With the response blobs from EventBrite, strip out the individual event
 // information
 var event_array = _separate_events_from_master_array(results)
-console.log(event_array)
 return event_array
 
 }).then((events_array => {
@@ -98,9 +97,8 @@ return events_array
  * the hacks-hackers S3 bucket.
  **/ 
    const response = axios.get(`${config.APIUrl}eventbrite.json`);
-   console.log("this that" , response)
 
-const event_array = response.then(result => {
+    const event_array = response.then(result => {
       return  _downloadEventBriteInfo(result.data["eventbrite_org_ids"])
 })
 

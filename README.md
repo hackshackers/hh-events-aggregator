@@ -33,3 +33,14 @@ $ npm link aws-sdk
 ```
 
 Then upload `aggregator.zip` to Lambda.
+
+
+
+
+# Required Environment Variables
+LONDON_EVENTBRITE_TOKEN: Eventbrite API token for the London Hacks/Hackers group
+
+
+# Additional Required Environment Deployment Variables
+AWS_ACCESS_KEY: AWS Secret Access key that allows access to S23 storage accounts
+DEPLOY_S3=Variable present indicating whether to deploy to the S3 accounts or not. If this variable is set, deployment will happen. If not, deployment will be skipped.

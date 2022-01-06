@@ -4,7 +4,6 @@ const cyan = chalk.cyan;
 const red = chalk.red;
 const green = chalk.green;
 const yellow = chalk.yellow;
-const processICalResponse = require('./processICalResponse');
 const config = require('./config');
 const S3Deploy = require('./S3Deploy');
 
@@ -28,3 +27,4 @@ module.exports = function(eventString) {
     }
    eventBuffer = Buffer.from(eventString, 'utf8')
     _afterResponse();
+};
