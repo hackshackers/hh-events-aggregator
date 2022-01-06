@@ -4,8 +4,8 @@ Runs on AWS Lambda to combine event feeds from Hacks/Hackers local groups into a
 
 After extensive investigation, we are only pulling from group events inside EventBrite.
 
-The MeetUp API at last check was paid. An earlier version of the application scraped data from the MeetUp site, but this strategy is not recommended as a long-term solution, as any change to the MeetUp website introduces breaking changes to our app. (Whereas a MeetUp API would be versioned). 
-The Facebook API does not provide an automatable way to continually download event information. (I.E. In order for the application to function, it would be required for a user to manually approve the access on a regular basis.
+The MeetUp API at last check was paid. An earlier version of the application scraped data from the MeetUp site, but this strategy is not recommended as a long-term solution, as any change to the MeetUp website introduces breaking changes to our app. (While paid, the MeetUp API would very likely be versioned, and would allow us to coordinate updates to the site when we are able to). 
+The Facebook API does not provide an automatable way to continually download event information. (I.E. In order for the application to function, it would be required for a user to manually approve the access on a regular basis.)
 
 ## Running locally
 
