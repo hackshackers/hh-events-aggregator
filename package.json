@@ -6,9 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Zach Green, Josh Kadis",
+  "author": "Zach Green, Josh Kadis, Lukas Udstuen",
   "license": "MIT",
-  "dependencies" : {
+  "dependencies": {
     "axios": "0.15.3",
     "chalk": "1.1.3"
   }
