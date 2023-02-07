@@ -9,7 +9,7 @@
   "author": "Zach Green, Josh Kadis, Lukas Udstuen",
   "license": "MIT",
   "dependencies": {
-    "axios": "0.15.3",
+    "axios": "0.21.2",
     "chalk": "1.1.3"
   }
 }
